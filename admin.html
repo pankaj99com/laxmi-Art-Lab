@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Laxmi Arts Lab</title>
+    <meta name="description" content="Admin editor for Laxmi Arts Lab website content." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Admin navigation">
+        <a class="brand" href="index.html" aria-label="Laxmi Arts Lab home">
+          <span class="brand-mark">LA</span>
+          <span>
+            <strong>Laxmi Arts Lab</strong>
+            <small>Admin Studio</small>
+          </span>
+        </a>
+        <div class="nav-links admin-nav-links">
+          <a href="index.html">Website</a>
+          <button class="button button-small" type="button" id="logoutButton">Logout</button>
+        </div>
+      </nav>
+    </header>
+
+    <main class="admin-shell">
+      <section class="admin-login" id="loginPanel">
+        <form class="contact-form admin-login-card" id="loginForm">
+          <p class="eyebrow">Admin login</p>
+          <h1>Update Laxmi Arts Lab</h1>
+          <p class="admin-note">Sign in with a Supabase Auth email user to update class prices, painting prices, availability, and gallery image URLs.</p>
+          <label>
+            Email
+            <input required name="email" type="email" autocomplete="email" placeholder="admin@example.com" />
+          </label>
+          <label>
+            Password
+            <input required name="password" type="password" autocomplete="current-password" placeholder="Enter password" />
+          </label>
+          <button class="button" type="submit">Login</button>
+          <p class="form-note" id="loginStatus" role="status"></p>
+        </form>
+      </section>
+
+      <section class="admin-dashboard" id="dashboardPanel" hidden>
+        <div class="admin-heading">
+          <div>
+            <p class="eyebrow">Admin dashboard</p>
+            <h1>Content Editor</h1>
+          </div>
+          <div class="admin-actions">
+            <button class="button button-ghost" type="button" id="resetButton">Reset Demo Data</button>
+            <a class="button" href="index.html">View Website</a>
+          </div>
+        </div>
+
+        <section class="admin-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Classes</p>
+              <h2>Update Class Prices</h2>
+            </div>
+          </div>
+          <form class="admin-editor-grid" id="classesEditor"></form>
+        </section>
+
+        <section class="admin-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Gallery</p>
+              <h2>Update Paintings For Sale</h2>
+            </div>
+            <button class="button button-ghost" type="button" id="addPaintingButton">Add Painting</button>
+          </div>
+          <form class="admin-editor-grid" id="paintingsEditor"></form>
+        </section>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

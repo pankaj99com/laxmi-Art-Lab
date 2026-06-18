@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laxmi Arts Lab | Paintings & Art Classes</title>
+    <meta
+      name="description"
+      content="Laxmi Arts Lab showcases original paintings and offers painting classes for children from age 5 and adults."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="leaf-field" id="leafField" aria-hidden="true"></div>
+    <header class="site-header" id="top">
+      <nav class="nav" aria-label="Main navigation">
+        <a class="brand" href="#top" aria-label="Laxmi Arts Lab home">
+          <span class="brand-mark">LA</span>
+          <span>
+            <strong>Laxmi Arts Lab</strong>
+            <small>Paint. Learn. Collect.</small>
+          </span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navLinks">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="nav-links" id="navLinks">
+          <a href="#paintings">Paintings</a>
+          <a href="#classes">Classes</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+          <a href="admin.html">Admin</a>
+          <button class="button button-small" type="button" data-open-modal="class">Register</button>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-art" aria-hidden="true">
+          <span class="stroke stroke-one"></span>
+          <span class="stroke stroke-two"></span>
+          <span class="stroke stroke-three"></span>
+        </div>
+        <div class="hero-content">
+          <p class="eyebrow">Original artwork and guided classes from age 5</p>
+          <h1>Laxmi Arts Lab</h1>
+          <p>
+            A refined creative studio for expressive paintings, guided art classes, and collectible
+            pieces made with warmth and craft.
+          </p>
+          <div class="hero-stats" aria-label="Studio highlights">
+            <span><strong>6</strong> studio artworks</span>
+            <span><strong>5+</strong> class age</span>
+            <span><strong>3</strong> learning paths</span>
+          </div>
+          <div class="hero-actions">
+            <a class="button" href="#paintings">Explore Paintings</a>
+            <a class="button button-ghost" href="#classes">View Classes</a>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="Featured artwork preview">
+          <div class="canvas-preview">
+            <div class="sun"></div>
+            <div class="hill hill-a"></div>
+            <div class="hill hill-b"></div>
+            <div class="river"></div>
+          </div>
+          <div class="hero-panel-footer">
+            <span>Featured this week</span>
+            <strong>Color Stories Collection</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section intro-band reveal" id="about">
+        <div>
+          <p class="eyebrow">About the studio</p>
+          <h2>Art that feels personal, classes that feel joyful.</h2>
+        </div>
+        <p>
+          Laxmi Arts Lab is a welcoming artist studio where original paintings, custom artwork, and
+          practical painting lessons come together. The studio works with children, beginners, and
+          hobby artists through patient, hands-on guidance, while collectors can explore available
+          pieces, request commissions, and learn the story behind each artwork.
+        </p>
+      </section>
+
+      <section class="section reveal" id="paintings">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Gallery</p>
+            <h2>Paintings Available For Purchase</h2>
+          </div>
+          <div class="filter-row" role="group" aria-label="Filter paintings">
+            <button class="chip active" type="button" data-filter="all">All</button>
+            <button class="chip" type="button" data-filter="Landscape">Landscape</button>
+            <button class="chip" type="button" data-filter="Abstract">Abstract</button>
+            <button class="chip" type="button" data-filter="Floral">Floral</button>
+          </div>
+        </div>
+        <div class="grid gallery-grid" id="paintingGrid"></div>
+      </section>
+
+      <section class="section classes-section reveal" id="classes">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Painting classes</p>
+            <h2>Register For Classes From Age 5</h2>
+          </div>
+          <button class="button" type="button" data-open-modal="class">Register Now</button>
+        </div>
+        <div class="grid class-grid" id="classGrid"></div>
+      </section>
+
+      <section class="section studio-strip reveal">
+        <article>
+          <strong>Flexible pricing</strong>
+          <span>Update prices by painting size, medium, class type, or batch.</span>
+        </article>
+        <article>
+          <strong>Easy uploads</strong>
+          <span>Add new painting details and image URLs in the website data file.</span>
+        </article>
+        <article>
+          <strong>Payment ready</strong>
+          <span>Checkout buttons are prepared for a real payment gateway connection.</span>
+        </article>
+      </section>
+
+      <section class="section contact-section reveal" id="contact">
+        <div>
+          <p class="eyebrow">Contact</p>
+          <h2>Start with a class, a commission, or a painting you love.</h2>
+          <p>
+            Use the forms for class registration or painting purchase interest. Payment can be
+            connected to Razorpay, Stripe, PayPal, or another provider.
+          </p>
+        </div>
+        <form class="contact-form" id="contactForm">
+          <label>
+            Name
+            <input required name="name" type="text" placeholder="Your name" />
+          </label>
+          <label>
+            Email
+            <input required name="email" type="email" placeholder="you@example.com" />
+          </label>
+          <label>
+            Message
+            <textarea required name="message" rows="4" placeholder="Tell us what you need"></textarea>
+          </label>
+          <button class="button" type="submit">Send Message</button>
+          <p class="form-note" id="contactStatus" role="status"></p>
+        </form>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <strong>Laxmi Arts Lab</strong>
+      <span>Original paintings, creative classes, and custom art experiences.</span>
+    </footer>
+
+    <dialog class="modal" id="purchaseModal">
+      <form method="dialog" class="modal-card" id="purchaseForm">
+        <button class="modal-close" type="button" data-close-modal aria-label="Close">x</button>
+        <p class="eyebrow">Purchase painting</p>
+        <h3 id="purchaseTitle">Painting</h3>
+        <p id="purchaseMeta"></p>
+        <label>
+          Name
+          <input required name="buyerName" type="text" />
+        </label>
+        <label>
+          Email
+          <input required name="buyerEmail" type="email" />
+        </label>
+        <label>
+          Delivery city
+          <input required name="city" type="text" />
+        </label>
+        <button class="button" type="submit">Continue To Payment</button>
+        <p class="form-note" id="purchaseStatus" role="status"></p>
+      </form>
+    </dialog>
+
+    <dialog class="modal" id="classModal">
+      <form method="dialog" class="modal-card" id="classForm">
+        <button class="modal-close" type="button" data-close-modal aria-label="Close">x</button>
+        <p class="eyebrow">Class registration</p>
+        <h3>Register For Painting Classes</h3>
+        <label>
+          Student name
+          <input required name="studentName" type="text" />
+        </label>
+        <label>
+          Age
+          <input required name="age" type="number" min="5" placeholder="Minimum age 5" />
+        </label>
+        <label>
+          Class type
+          <select required name="classType" id="classSelect"></select>
+        </label>
+        <label>
+          Parent or guardian email
+          <input required name="guardianEmail" type="email" />
+        </label>
+        <button class="button" type="submit">Continue To Payment</button>
+        <p class="form-note" id="classStatus" role="status">Registrations start from age 5.</p>
+      </form>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
