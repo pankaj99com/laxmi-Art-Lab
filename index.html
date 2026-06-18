@@ -121,29 +121,18 @@
         <div class="grid class-grid" id="classGrid"></div>
       </section>
 
-      <section class="section studio-strip reveal">
-        <article>
-          <strong>Flexible pricing</strong>
-          <span>Update prices by painting size, medium, class type, or batch.</span>
-        </article>
-        <article>
-          <strong>Easy uploads</strong>
-          <span>Add new painting details and image URLs in the website data file.</span>
-        </article>
-        <article>
-          <strong>Payment ready</strong>
-          <span>Checkout buttons are prepared for a real payment gateway connection.</span>
-        </article>
-      </section>
-
       <section class="section contact-section reveal" id="contact">
         <div>
           <p class="eyebrow">Contact</p>
-          <h2>Start with a class, a commission, or a painting you love.</h2>
+          <h2>Contact Laxmi Arts Lab</h2>
           <p>
-            Use the forms for class registration or painting purchase interest. Payment can be
-            connected to Razorpay, Stripe, PayPal, or another provider.
+            Call or email us to ask about painting classes, available artwork, custom paintings, or
+            studio visits.
           </p>
+          <div class="contact-details" aria-label="Laxmi Arts Lab contact details">
+            <a href="mailto:laxmi2838@gmail.com">laxmi2838@gmail.com</a>
+            <a href="tel:+918884078515">8884078515</a>
+          </div>
         </div>
         <form class="contact-form" id="contactForm">
           <label>
@@ -166,7 +155,7 @@
 
     <footer class="footer">
       <strong>Laxmi Arts Lab</strong>
-      <span>Original paintings, creative classes, and custom art experiences.</span>
+      <span>Email: <a href="mailto:laxmi2838@gmail.com">laxmi2838@gmail.com</a> | Contact: <a href="tel:+918884078515">8884078515</a></span>
     </footer>
 
     <dialog class="modal" id="purchaseModal">
@@ -188,6 +177,7 @@
           <input required name="city" type="text" />
         </label>
         <button class="button" type="submit">Continue To Payment</button>
+        <p class="payment-note">Payment opens through Razorpay when configured, otherwise through direct UPI.</p>
         <p class="form-note" id="purchaseStatus" role="status"></p>
       </form>
     </dialog>
@@ -214,13 +204,16 @@
           <input required name="guardianEmail" type="email" />
         </label>
         <button class="button" type="submit">Continue To Payment</button>
+        <p class="payment-note">Payment opens through Razorpay when configured, otherwise through direct UPI.</p>
         <p class="form-note" id="classStatus" role="status">Registrations start from age 5.</p>
       </form>
     </dialog>
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script src="supabase-config.js"></script>
+    <script src="payment-config.js"></script>
     <script src="script.js"></script>
   </body>
 </html>

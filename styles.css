@@ -602,8 +602,15 @@ h3 {
 .painting-image {
   min-height: 280px;
   background: var(--art-bg);
+  background-position: center;
+  background-size: cover;
   position: relative;
   overflow: hidden;
+}
+
+.painting-image.has-photo::before,
+.painting-image.has-photo::after {
+  display: none;
 }
 
 .painting-image::before {
@@ -719,6 +726,31 @@ h3 {
   gap: 42px;
 }
 
+.contact-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.contact-details a,
+.footer a {
+  color: var(--teal);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.contact-details a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 0 16px;
+  border: 1px solid rgba(42, 35, 27, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.68);
+  box-shadow: 0 10px 24px rgba(39, 32, 54, 0.08);
+}
+
 .contact-form,
 .modal-card {
   background: rgba(255, 255, 255, 0.82);
@@ -761,6 +793,12 @@ textarea {
 
 .form-note.error {
   color: #b42318;
+}
+
+.payment-note {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
 }
 
 .footer {
@@ -869,6 +907,71 @@ textarea {
 
 .admin-check input {
   width: auto;
+}
+
+.admin-image-tools {
+  display: grid;
+  gap: 12px;
+  margin: 10px 0 18px;
+}
+
+.admin-image-preview {
+  min-height: 180px;
+  border: 1px solid rgba(42, 35, 27, 0.12);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.72), rgba(248, 241, 232, 0.72)),
+    #fff;
+  background-position: center;
+  background-size: cover;
+}
+
+.admin-image-preview.empty {
+  display: grid;
+  place-items: center;
+}
+
+.admin-image-preview.empty::before {
+  content: "No image uploaded";
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.admin-upload-control {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px dashed rgba(116, 59, 44, 0.38);
+  border-radius: 18px;
+  background: rgba(255, 250, 243, 0.72);
+  cursor: pointer;
+}
+
+.admin-upload-control span {
+  color: var(--plum);
+  font-weight: 900;
+}
+
+.admin-upload-control input {
+  cursor: pointer;
+}
+
+.admin-upload-control input::file-selector-button {
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #191714, var(--plum), var(--coral));
+  color: #fff;
+  cursor: pointer;
+  font-weight: 800;
+  margin-right: 12px;
+  padding: 0.7rem 1rem;
+}
+
+.admin-save-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .modal {

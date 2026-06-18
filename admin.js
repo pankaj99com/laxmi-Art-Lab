@@ -99,6 +99,7 @@ const defaultData = {
 };
 
 let siteData = loadData();
+let pendingImageUploads = {};
 
 const loginPanel = document.querySelector("#loginPanel");
 const dashboardPanel = document.querySelector("#dashboardPanel");
@@ -199,9 +200,29 @@ function renderEditors() {
           <label>Medium<input data-painting="${painting.id}" data-field="medium" value="${painting.medium}" /></label>
           <label>Size<input data-painting="${painting.id}" data-field="size" value="${painting.size}" /></label>
           <label>Price<input data-painting="${painting.id}" data-field="price" type="number" min="0" value="${painting.price}" /></label>
-          <label>Image URL<input data-painting="${painting.id}" data-field="image" type="url" value="${painting.image || ""}" placeholder="https://..." /></label>
+          <div class="admin-image-tools">
+            <div
+              class="admin-image-preview ${painting.image ? "" : "empty"}"
+              data-image-preview="${painting.id}"
+              ${painting.image ? `style="background-image:url('${painting.image}')"` : ""}
+            ></div>
+            ${
+              painting.image
+                ? `<p class="form-note">Remove the current image before uploading a new one.</p>
+                   <button class="button button-ghost" type="button" data-remove-image="${painting.id}">Remove Current Image</button>`
+                : `<label class="admin-upload-control">
+                     <span>Browse Image From Computer</span>
+                     <input data-image-upload="${painting.id}" type="file" accept="image/*" />
+                   </label>
+                   <p class="form-note" data-upload-note="${painting.id}">Choose a painting photo from your system, then click Save Painting.</p>
+                   <label>Image URL<input data-painting="${painting.id}" data-field="image" type="url" value="" placeholder="https://..." /></label>`
+            }
+          </div>
           <label class="admin-check"><input data-painting="${painting.id}" data-field="available" type="checkbox" ${painting.available ? "checked" : ""} /> Available for sale</label>
-          <button class="button button-ghost" type="button" data-remove-painting="${painting.id}">Remove</button>
+          <div class="admin-save-row">
+            <button class="button" type="button" data-save-painting="${painting.id}">Save Painting</button>
+            <button class="button button-ghost" type="button" data-remove-painting="${painting.id}">Remove</button>
+          </div>
         </article>
       `,
     )
@@ -220,23 +241,84 @@ function updateClass(event) {
   showToast("Class updated. Refresh the website to see it.");
 }
 
-function updatePainting(event) {
-  const input = event.target.closest("[data-painting]");
-  if (!input) return;
+function resizeImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read image file."));
+    reader.onload = () => {
+      const image = new Image();
+      image.onerror = () => reject(new Error("Could not load image file."));
+      image.onload = () => {
+        const maxSize = 1400;
+        const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(image.width * scale);
+        canvas.height = Math.round(image.height * scale);
+        const context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.82));
+      };
+      image.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
-  const painting = siteData.paintings.find((item) => item.id === input.dataset.painting);
-  if (!painting) return;
+function getPaintingCard(button) {
+  return button.closest(".admin-card");
+}
 
-  if (input.dataset.field === "price") {
-    painting.price = Number(input.value);
-  } else if (input.dataset.field === "available") {
-    painting.available = input.checked;
-  } else {
-    painting[input.dataset.field] = input.value;
+function savePaintingFromCard(button) {
+  const card = getPaintingCard(button);
+  const paintingId = button.dataset.savePainting;
+  const painting = siteData.paintings.find((item) => item.id === paintingId);
+  if (!card || !painting) return;
+
+  card.querySelectorAll("[data-painting]").forEach((input) => {
+    if (input.dataset.field === "price") {
+      painting.price = Number(input.value);
+    } else if (input.dataset.field === "available") {
+      painting.available = input.checked;
+    } else if (input.dataset.field === "image") {
+      painting.image = pendingImageUploads[paintingId] || input.value.trim();
+    } else {
+      painting[input.dataset.field] = input.value;
+    }
+  });
+
+  if (pendingImageUploads[paintingId]) {
+    painting.image = pendingImageUploads[paintingId];
+    delete pendingImageUploads[paintingId];
   }
 
   saveData();
-  showToast("Painting updated. Refresh the website to see it.");
+  window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY, newValue: JSON.stringify(siteData) }));
+  renderEditors();
+  showToast("Painting saved. Open the website to see the image.");
+}
+
+async function handleImageUpload(input) {
+  const paintingId = input.dataset.imageUpload;
+  const file = input.files?.[0];
+  if (!file) return;
+
+  const preview = document.querySelector(`[data-image-preview="${paintingId}"]`);
+  const note = document.querySelector(`[data-upload-note="${paintingId}"]`);
+  if (note) note.textContent = "Preparing image preview...";
+
+  try {
+    const imageData = await resizeImageFile(file);
+    pendingImageUploads[paintingId] = imageData;
+
+    if (preview) {
+      preview.classList.remove("empty");
+      preview.style.backgroundImage = `url('${imageData}')`;
+    }
+
+    if (note) note.textContent = `${file.name} is ready. Click Save Painting to publish it.`;
+  } catch (error) {
+    if (note) note.textContent = error.message;
+  }
 }
 
 loginForm.addEventListener("input", () => {
@@ -276,10 +358,34 @@ loginForm.addEventListener("submit", (event) => {
 });
 
 classesEditor.addEventListener("input", updateClass);
-paintingsEditor.addEventListener("input", updatePainting);
-paintingsEditor.addEventListener("change", updatePainting);
+
+paintingsEditor.addEventListener("change", (event) => {
+  const upload = event.target.closest("[data-image-upload]");
+  if (upload) handleImageUpload(upload);
+});
 
 paintingsEditor.addEventListener("click", (event) => {
+  const saveButton = event.target.closest("[data-save-painting]");
+  if (saveButton) {
+    savePaintingFromCard(saveButton);
+    return;
+  }
+
+  const removeImageButton = event.target.closest("[data-remove-image]");
+  if (removeImageButton) {
+    const painting = siteData.paintings.find((item) => item.id === removeImageButton.dataset.removeImage);
+    if (!painting) return;
+
+    if (!window.confirm("Remove the current image before uploading a new one?")) return;
+
+    painting.image = "";
+    delete pendingImageUploads[painting.id];
+    saveData();
+    renderEditors();
+    showToast("Current image removed. You can upload a new one now.");
+    return;
+  }
+
   const button = event.target.closest("[data-remove-painting]");
   if (!button) return;
 

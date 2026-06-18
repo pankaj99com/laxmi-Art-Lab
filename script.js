@@ -1,5 +1,6 @@
 const STORAGE_KEY = "laxmiArtsLabData";
 const supabaseClient = typeof createSupabaseClient === "function" ? createSupabaseClient() : null;
+const paymentConfig = window.LAXMI_PAYMENT_CONFIG || {};
 
 const defaultPaintings = [
   {
@@ -111,9 +112,9 @@ function loadSiteData() {
   };
 }
 
-const siteData = loadSiteData();
-const paintings = siteData.paintings;
-const classes = siteData.classes;
+let siteData = loadSiteData();
+let paintings = siteData.paintings;
+let classes = siteData.classes;
 
 const currency = new Intl.NumberFormat("en-IN", {
   style: "currency",
@@ -167,9 +168,93 @@ async function saveFormSubmission(formType, payload) {
   if (error) throw error;
 }
 
+function getCustomerName(customer) {
+  return customer.buyerName || customer.studentName || customer.name || "";
+}
+
+function getCustomerEmail(customer) {
+  return customer.buyerEmail || customer.guardianEmail || customer.email || "";
+}
+
+function getPaymentDescription(type, item) {
+  if (type === "painting") return `Painting purchase - ${item.title}`;
+  return `Class registration - ${item.name}`;
+}
+
+function buildUpiUrl(payment) {
+  const params = new URLSearchParams({
+    pa: paymentConfig.upiId,
+    pn: paymentConfig.payeeName || paymentConfig.businessName || "Laxmi Arts Lab",
+    am: String(payment.amount),
+    cu: payment.currency,
+    tn: payment.description,
+  });
+
+  return `upi://pay?${params.toString()}`;
+}
+
+function openRazorpayCheckout(payment) {
+  if (!paymentConfig.razorpayKeyId || !window.Razorpay) return false;
+
+  const checkout = new window.Razorpay({
+    key: paymentConfig.razorpayKeyId,
+    amount: Math.round(payment.amount * 100),
+    currency: payment.currency,
+    name: paymentConfig.businessName || "Laxmi Arts Lab",
+    description: payment.description,
+    prefill: {
+      name: payment.customerName,
+      email: payment.customerEmail,
+      contact: payment.customerPhone || paymentConfig.contactPhone,
+    },
+    notes: {
+      item_id: payment.itemId,
+      item_type: payment.type,
+    },
+    theme: {
+      color: "#743b2c",
+    },
+    handler(response) {
+      console.info("Razorpay payment response", response);
+      showToast("Payment completed. Thank you.");
+    },
+    modal: {
+      ondismiss() {
+        showToast("Payment window closed.");
+      },
+    },
+  });
+
+  checkout.open();
+  return true;
+}
+
+function openUpiPayment(payment) {
+  if (!paymentConfig.upiId) return false;
+
+  window.location.href = buildUpiUrl(payment);
+  showToast("Opening UPI payment app. Complete payment in Google Pay or another UPI app.");
+  return true;
+}
+
 function checkout(type, item, customer) {
-  console.info("Payment integration payload", { type, item, customer });
-  showToast(`Saved ${item.title || item.name}. Connect a payment provider for live checkout.`);
+  const payment = {
+    type,
+    itemId: item.id,
+    amount: Number(item.price),
+    currency: paymentConfig.currency || "INR",
+    description: getPaymentDescription(type, item),
+    customerName: getCustomerName(customer),
+    customerEmail: getCustomerEmail(customer),
+    customerPhone: customer.phone || customer.contact || "",
+  };
+
+  console.info("Payment integration payload", { payment, item, customer });
+
+  if (openRazorpayCheckout(payment)) return;
+  if (openUpiPayment(payment)) return;
+
+  showToast("Saved request. Add Razorpay Key ID or UPI ID in payment-config.js to accept payment.");
 }
 
 function renderMapleLeaves() {
@@ -411,3 +496,13 @@ renderPaintings();
 renderClasses();
 renderMapleLeaves();
 setupRevealAnimation();
+
+window.addEventListener("storage", (event) => {
+  if (event.key !== STORAGE_KEY) return;
+
+  siteData = loadSiteData();
+  paintings = siteData.paintings;
+  classes = siteData.classes;
+  renderPaintings(document.querySelector("[data-filter].active")?.dataset.filter || "all");
+  renderClasses();
+});
